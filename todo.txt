@@ -1,0 +1,14 @@
+PROMPTS *-----1 USER
+
+ab prompts to ban gaye 
+ab users banao wo prompts banagien 
+
+
+
+-- rough depends
+fastapi[standard]
+pydantic
+sqlalchemy
+dotenv
+pyjwt
+pwdlib
