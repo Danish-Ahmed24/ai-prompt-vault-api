@@ -3,13 +3,13 @@ from app.database import get_conn
 from typing import Annotated
 from sqlalchemy.engine import Connection
 from sqlalchemy import text
-from app.schemas import PromptCreate,PromptUpdate
+from app.schemas import PromptCreate,PromptUpdate,PromptResponse
 from app.sql.prompt import *
 from ..auth import get_current_user
 
 router = APIRouter()
 
-@router.get("/prompt/me",tags=['prompt'])
+@router.get("/prompt/me",tags=['prompt'],response_model=list[PromptResponse])
 def get_my_prompts(
     conn:Annotated[Connection,Depends(get_conn)],
     current_user=Depends(get_current_user) 
@@ -23,7 +23,7 @@ def get_my_prompts(
     return result
 
 
-@router.get("/prompt",tags=['prompt'])
+@router.get("/prompt",tags=['prompt'],response_model=list[PromptResponse])
 def get_prompts(
     conn:Annotated[Connection,Depends(get_conn)],
     # current_user=Depends(get_current_user) 
@@ -35,7 +35,7 @@ def get_prompts(
     return result
 
 
-@router.get("/prompt/{prompt_id}",tags=['prompt'])
+@router.get("/prompt/{prompt_id}",tags=['prompt'],response_model=PromptResponse)
 def get_prompt_by_id(
     prompt_id:int,
     conn:Annotated[Connection,Depends(get_conn)],

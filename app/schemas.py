@@ -16,6 +16,8 @@ class PromptUpdate(PromptBase):
 
 class PromptResponse(PromptBase): 
     id: int
+    # user_id: int
+    is_private:bool
     created_at: datetime
 
 
