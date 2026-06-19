@@ -8,7 +8,7 @@ from .database import get_conn
 import os
 from datetime import datetime,timezone,timedelta
 from typing import Annotated
-from .schemas import UserCreate
+from .schemas.users_schema import UserCreate
 from pwdlib import PasswordHash
 from .sql.auth import *
 

@@ -6,7 +6,7 @@ GET_ALL_PROMPTS = text("""
 
 
 GET_PROMPT_BY_ID=text("""
-        SELECT * FROM prompts where id=:prompt_id where is_private=false;
+        SELECT * FROM prompts where id=:prompt_id and is_private=false;
 """)
 
 

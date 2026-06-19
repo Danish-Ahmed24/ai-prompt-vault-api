@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from app.routers import prompt
+from app.routers import prompts_router
 from app import auth
 app = FastAPI()
-app.include_router(prompt.router)
+app.include_router(prompts_router.router)
 app.include_router(auth.router)
 from fastapi.middleware.cors import CORSMiddleware
 

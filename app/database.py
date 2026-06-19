@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
+from sqlalchemy.engine import Connection
+from typing import Annotated
+from fastapi import Depends
 
 load_dotenv()
 
@@ -16,3 +19,5 @@ engine = create_engine(
 def get_conn():
     with engine.begin() as conn:
         yield conn
+
+dbConn = Annotated[Connection,Depends(get_conn)]

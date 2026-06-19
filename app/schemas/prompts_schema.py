@@ -19,16 +19,3 @@ class PromptResponse(PromptBase):
     # user_id: int
     is_private:bool
     created_at: datetime
-
-
-
-
-class UserBase(BaseModel):
-    username: str = Field(min_length=1)
-
-
-class UserCreate(UserBase):
-    password: str = Field(min_length=8)
-
-class UserInDb(UserBase):
-    hashed_password: str
