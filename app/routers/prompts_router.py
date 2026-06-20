@@ -10,12 +10,7 @@ from ..services import prompts_service
 
 router = APIRouter()
 
-@router.get("/prompts/me",response_model=list[PromptResponse])
-def get_my_prompts(
-    conn:dbConn,
-    current_user=Depends(get_current_user)
-):
-    return prompts_service.get_my_prompts(conn=conn,current_user=current_user)
+
 
 @router.get("/prompts",response_model=list[PromptResponse])
 def get_prompts(
@@ -32,6 +27,12 @@ def get_prompt_by_id(
 ):
     return prompts_service.get_prompt_by_id(conn=conn,current_user=current_user,prompt_id=prompt_id)
 
+@router.get("/prompts/me",response_model=list[PromptResponse])
+def get_my_prompts(
+    conn:dbConn,
+    current_user=Depends(get_current_user)
+):
+    return prompts_service.get_my_prompts(conn=conn,current_user=current_user)
 
 # @router.post("/prompt/add",status_code=status.HTTP_201_CREATED,tags=['prompt'])
 # def add_prompt(
