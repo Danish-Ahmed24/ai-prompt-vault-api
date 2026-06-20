@@ -4,7 +4,7 @@ from jwt import InvalidTokenError
 import jwt
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.engine import Connection
-from .database import get_conn
+from .database import dbConn
 import os
 from datetime import datetime,timezone,timedelta
 from typing import Annotated
@@ -18,13 +18,16 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15
 
 
 router = APIRouter(tags=['auth'])
-auth_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 password_hash = PasswordHash.recommended()
+
+auth_scheme_strict = OAuth2PasswordBearer(tokenUrl="token",auto_error=True)
+auth_scheme_optional = OAuth2PasswordBearer(tokenUrl="token",auto_error=False)
 
 @router.post("/register",status_code=status.HTTP_201_CREATED)
 def register(
     user_data:Annotated[UserCreate,Body()],
-    conn:Annotated[Connection,Depends(get_conn)]
+    conn:dbConn
              ):
     username=user_data.username
     hashed_password=password_hash.hash(password=user_data.password)
@@ -46,7 +49,7 @@ def register(
 @router.post("/token",include_in_schema=False)
 def token(
     form_data:Annotated[OAuth2PasswordRequestForm,Depends()],
-    conn:Annotated[Connection,Depends(get_conn)]
+    conn:dbConn
     ):
     res=verify_user(username=form_data.username,conn=conn)
     if not res:
@@ -66,7 +69,8 @@ def token(
     }
 
 
-def get_current_user(conn:Annotated[Connection,Depends(get_conn)],token=Depends(auth_scheme)):
+def get_current_user(conn:dbConn,token=Depends(auth_scheme_strict)):
+
     try:
         payload=jwt.decode(jwt=token,key=SECRET_KEY,algorithms=[ALGORITHM])
         res=verify_user(username=payload['username'],conn=conn)
@@ -76,6 +80,12 @@ def get_current_user(conn:Annotated[Connection,Depends(get_conn)],token=Depends(
     except InvalidTokenError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="INVALID CREDENTIALS")
     
+def get_current_optional_user(conn:dbConn,token=Depends(auth_scheme_optional)):
+    if token is None:
+        return None
+    return get_current_user(conn=conn,token=token)
+
+
 def verify_user(username:str,
                 conn:Connection
                 ):

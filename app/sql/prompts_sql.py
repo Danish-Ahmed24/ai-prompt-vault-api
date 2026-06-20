@@ -1,14 +1,108 @@
 from sqlalchemy import text
 
-GET_ALL_PROMPTS = text("""
-                        SELECT * FROM prompts WHERE is_private=false;
+GET_ALL_PROMPTS_FOR_GUEST_USER = text("""
+SELECT 
+    p.id,
+    p.title,
+    p.content,
+    u.username AS author,
+    p.created_at,
+    COALESCE(r.likes_count,0) AS likes_count,
+    COALESCE(r.dislikes_count,0) AS dislikes_count,
+    COALESCE(c.comments_count,0) AS comments_count
+FROM prompts p
+JOIN users u ON u.id = p.user_id
+LEFT JOIN 
+	(
+		SELECT 
+			target_id,
+            SUM(type='like') as likes_count,
+            SUM(type='dislike') as dislikes_count
+		FROM reactions 
+        WHERE target_type = 'prompt'
+        GROUP BY target_id
+    ) r ON r.target_id = p.id
+LEFT JOIN (
+	SELECT 
+		prompt_id,
+        COUNT(user_id) as comments_count
+        FROM comments
+        GROUP BY prompt_id
+) c 
+    ON c.prompt_id = p.id
+WHERE p.is_private = FALSE
+ORDER BY p.created_at DESC;
+
                     """)
+
+GET_ALL_PROMPTS_FOR_LOGGED_USER = text("""
+SELECT 
+    p.id,
+    p.title,
+    p.content,
+    u.username AS author,
+    p.created_at,
+    COALESCE(r.likes_count,0) AS likes_count,
+    COALESCE(r.dislikes_count,0) AS dislikes_count,
+    COALESCE(c.comments_count,0) AS comments_count,
+    COALESCE((SELECT DISTINCT 1 FROM bookmarks WHERE user_id=:user_id AND prompt_id=p.id),0) as bookmarked,
+    COALESCE((select type from reactions where user_id=:user_id AND target_id=p.id AND target_type='prompt'),'none') as my_reaction
+FROM prompts p
+JOIN users u ON u.id = p.user_id
+LEFT JOIN 
+	(
+		SELECT 
+			target_id,
+            SUM(type='like') as likes_count,
+            SUM(type='dislike') as dislikes_count
+		FROM reactions 
+        WHERE target_type = 'prompt'
+        GROUP BY target_id
+    ) r ON r.target_id = p.id
+LEFT JOIN (
+	SELECT 
+		prompt_id,
+        COUNT(user_id) as comments_count
+        FROM comments
+        GROUP BY prompt_id
+) c 
+    ON c.prompt_id = p.id
+WHERE p.is_private = FALSE
+ORDER BY p.created_at DESC;
+
+                    """)
+
+
+# [
+#   {
+#     "id": 1,
+#     "title": "FastAPI Guide",
+#     "content": "....",
+#     "author": "ali",
+#     "created_at": "2026-06-20T10:00:00Z",
+#     "reaction_count": 10,
+#     "comment_count": 5
+#   }
+# ]
+
 
 
 GET_PROMPT_BY_ID=text("""
         SELECT * FROM prompts where id=:prompt_id and is_private=false;
 """)
 
+# {
+#   "id": 1,
+#   "title": "FastAPI Guide",
+#   "content": "....",
+#   "author": "ali",
+#   "is_private": false,
+#   "created_at": "2026-06-20T10:00:00Z",
+#   "reaction_count": 10,
+#   "comment_count": 5,
+#   "bookmarked": true,
+#   "my_reaction": "like"
+# }
 
 INSERT_PROMPT=text(
         """

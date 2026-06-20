@@ -12,3 +12,7 @@ sqlalchemy
 dotenv
 pyjwt
 pwdlib
+
+
+service mein if else mein bug hai
+pydantic schemas update

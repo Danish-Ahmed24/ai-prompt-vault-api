@@ -3,9 +3,9 @@ from app.database import get_conn,dbConn
 from typing import Annotated
 from sqlalchemy.engine import Connection
 from sqlalchemy import text
-from ..schemas.prompts_schema import PromptCreate,PromptUpdate,PromptResponse
+from ..schemas.prompts_schema import PromptCreate,PromptResponse
 from app.sql.prompts_sql import *
-from ..auth import get_current_user
+from ..auth import get_current_user,get_current_optional_user
 from ..services import prompts_service
 router = APIRouter()
 
@@ -34,11 +34,34 @@ router = APIRouter()
 #         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No Prompts available")
 #     return result
 
+
 @router.get("/prompts",response_model=list[PromptResponse])
 def get_prompts(
-    conn:dbConn
+    conn:dbConn,
+    current_user=Depends(get_current_optional_user)
 ):
-    return prompts_service.get_prompts(conn=conn)
+    return prompts_service.get_prompts(conn=conn,current_user=current_user)
+
+
+# {
+#   "id": 1,
+#   "title": "FastAPI Guide",
+#   "content": "....",
+#   "author": "ali",
+#   "is_private": false,
+#   "created_at": "2026-06-20T10:00:00Z",
+#   "reaction_count": 10,
+#   "comment_count": 5,
+#   "bookmarked": true,
+#   "my_reaction": "like"
+# }
+
+@router.get("/prompts/{prompt_id}",response_model=PromptResponse)
+def get_prompt_by_id(
+    conn:dbConn,
+    prompt_id:int
+):
+    return prompts_service.get_prompt_by_id(conn=conn,prompt_id=prompt_id)
 
 # @router.get("/prompt/{prompt_id}",tags=['prompt'],response_model=PromptResponse)
 # def get_prompt_by_id(
