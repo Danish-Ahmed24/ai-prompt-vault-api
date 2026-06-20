@@ -7,33 +7,15 @@ from ..schemas.prompts_schema import PromptCreate,PromptResponse
 from app.sql.prompts_sql import *
 from ..auth import get_current_user,get_current_optional_user
 from ..services import prompts_service
+
 router = APIRouter()
 
-# @router.get("/prompt/me",tags=['prompt'],response_model=list[PromptResponse])
-# def get_my_prompts(
-#     conn:dbConn,
-#     current_user=Depends(get_current_user) 
-#     ):
-#     result = conn.execute(GET_MY_PROMPTS,{
-#         "user_id":current_user['id']
-#     })
-#     result = result.mappings().fetchall()
-#     if not result:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No Prompts available")
-#     return result
-
-
-# @router.get("/prompt",tags=['prompt'],response_model=list[PromptResponse])
-# def get_prompts(
-#     conn:Annotated[Connection,Depends(get_conn)],
-#     # current_user=Depends(get_current_user) 
-#     ):
-#     result = conn.execute(GET_ALL_PROMPTS)
-#     result = result.mappings().fetchall()
-#     if not result:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No Prompts available")
-#     return result
-
+@router.get("/prompts/me",response_model=list[PromptResponse])
+def get_my_prompts(
+    conn:dbConn,
+    current_user=Depends(get_current_user)
+):
+    return prompts_service.get_my_prompts(conn=conn,current_user=current_user)
 
 @router.get("/prompts",response_model=list[PromptResponse])
 def get_prompts(
@@ -42,43 +24,14 @@ def get_prompts(
 ):
     return prompts_service.get_prompts(conn=conn,current_user=current_user)
 
-
-# {
-#   "id": 1,
-#   "title": "FastAPI Guide",
-#   "content": "....",
-#   "author": "ali",
-#   "is_private": false,
-#   "created_at": "2026-06-20T10:00:00Z",
-#   "reaction_count": 10,
-#   "comment_count": 5,
-#   "bookmarked": true,
-#   "my_reaction": "like"
-# }
-
 @router.get("/prompts/{prompt_id}",response_model=PromptResponse)
 def get_prompt_by_id(
     conn:dbConn,
-    prompt_id:int
+    prompt_id:int,
+    current_user=Depends(get_current_optional_user)
 ):
-    return prompts_service.get_prompt_by_id(conn=conn,prompt_id=prompt_id)
+    return prompts_service.get_prompt_by_id(conn=conn,current_user=current_user,prompt_id=prompt_id)
 
-# @router.get("/prompt/{prompt_id}",tags=['prompt'],response_model=PromptResponse)
-# def get_prompt_by_id(
-#     prompt_id:int,
-#     conn:Annotated[Connection,Depends(get_conn)],
-#     # current_user=Depends(get_current_user) 
-#     ):
-    
-    
-#     res = conn.execute(GET_PROMPT_BY_ID,{
-#         "prompt_id":prompt_id
-#     })
-#     res = res.mappings().first()
-#     if res==None:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="PROMPT NOT FOUND")
-    
-#     return res 
 
 # @router.post("/prompt/add",status_code=status.HTTP_201_CREATED,tags=['prompt'])
 # def add_prompt(

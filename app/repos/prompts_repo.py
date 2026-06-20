@@ -2,8 +2,8 @@ from sqlalchemy.engine import Connection
 from app.sql.prompts_sql import *
 
 
-def get_prompts(conn:Connection,user_id:int=0):
-    if user_id==0:
+def get_prompts(conn:Connection,user_id:int|None=None):
+    if user_id is None:
         result = conn.execute(GET_ALL_PROMPTS_FOR_GUEST_USER)
     else:
         result = conn.execute(GET_ALL_PROMPTS_FOR_LOGGED_USER,{"user_id":user_id})
@@ -11,9 +11,23 @@ def get_prompts(conn:Connection,user_id:int=0):
 
 def get_prompt_by_id(
     conn:Connection,
-    prompt_id:int
+    prompt_id:int,
+    user_id:int|None=None
 ):
-    result = conn.execute(GET_PROMPT_BY_ID,{
-        "prompt_id":prompt_id
-    })
+    if user_id is None:
+        result = conn.execute(GET_PROMPT_BY_ID_GUEST,{
+            "prompt_id":prompt_id
+        })
+    else:
+        result = conn.execute(GET_PROMPT_BY_ID_LOGGED,{
+            "prompt_id":prompt_id,
+            "user_id":user_id
+        })
     return result.mappings().fetchone()
+
+
+def get_my_prompts(conn:Connection,user_id:int):
+    result = conn.execute(GET_MY_PROMPTS,{
+        "user_id":user_id
+    })
+    return result.mappings().fetchall()
