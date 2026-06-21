@@ -31,3 +31,7 @@ def get_my_prompts(conn:Connection,user_id:int):
         "user_id":user_id
     })
     return result.mappings().fetchall()
+
+def add_prompt(conn:Connection,prompt_data:dict):
+    result = conn.execute(INSERT_PROMPT,prompt_data)
+    return get_prompt_by_id(conn=conn,prompt_id=result.lastrowid,user_id=prompt_data['user_id'])

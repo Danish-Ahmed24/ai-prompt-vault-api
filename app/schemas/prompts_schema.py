@@ -8,7 +8,7 @@ class ReactionType(str,Enum):
     none = 'none'
 
 class PromptBase(BaseModel):
-    title: str
+    title: str  
     content: str
     
 

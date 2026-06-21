@@ -67,7 +67,7 @@ LEFT JOIN (
         GROUP BY prompt_id
 ) c 
     ON c.prompt_id = p.id
-WHERE p.is_private = FALSE
+WHERE (p.is_private = FALSE OR p.user_id = :user_id)
 ORDER BY p.created_at DESC;
 
                     """)
@@ -137,7 +137,7 @@ LEFT JOIN (
         GROUP BY prompt_id
 ) c 
     ON c.prompt_id = p.id
-WHERE p.is_private = FALSE and p.id = :prompt_id
+WHERE p.id = :prompt_id AND (p.is_private = FALSE OR p.user_id = :user_id)
 ORDER BY p.created_at DESC;
 
 """)
@@ -190,7 +190,7 @@ ORDER BY p.created_at DESC;
 
 INSERT_PROMPT=text(
         """
-    INSERT INTO prompts(title,content,user_id,is_private) values (:title,:content,:user_id,:is_private)
+    INSERT INTO prompts(title,content,user_id,is_private) values (:title,:content,:user_id,:is_private);
 """
     )
 
