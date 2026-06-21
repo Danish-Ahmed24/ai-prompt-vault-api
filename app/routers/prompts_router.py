@@ -3,7 +3,7 @@ from app.database import get_conn,dbConn
 from typing import Annotated
 from sqlalchemy.engine import Connection
 from sqlalchemy import text
-from ..schemas.prompts_schema import PromptCreate,PromptResponse
+from ..schemas.prompts_schema import PromptCreate,PromptResponse,PromptUpdate
 from app.sql.prompts_sql import *
 from ..auth import get_current_user,get_current_optional_user
 from ..services import prompts_service
@@ -19,7 +19,7 @@ def get_prompts(
 ):
     return prompts_service.get_prompts(conn=conn,current_user=current_user)
 
-@router.get("users/me/prompts",response_model=list[PromptResponse])
+@router.get("/users/me/prompts",response_model=list[PromptResponse])
 def get_my_prompts(
     conn:dbConn,
     current_user=Depends(get_current_user)
@@ -49,43 +49,13 @@ def delete_prompt_by_id(
     current_user=Depends(get_current_user)
 ):
     return prompts_service.delete_prompt_by_id(prompt_id=prompt_id,conn=conn,current_user=current_user)
-# @router.delete("/prompt/delete/{prompt_id}",tags=['prompt'])
-# def delete_prompt_by_id(
-#     prompt_id:int,
-#     conn:Annotated[Connection,Depends(get_conn)],
-#     current_user=Depends(get_current_user)
-#     ):
 
+@router.put("/prompts/{prompt_id}",response_model=PromptResponse)
+def update_prompt_by_id(
+    prompt_id:int,
+    prompt_update_data:Annotated[PromptUpdate,Body()],
+    conn:dbConn,
+    current_user=Depends(get_current_user)
+):
+    return prompts_service.update_prompt_by_id(prompt_id=prompt_id,prompt_update_data=prompt_update_data,conn=conn,current_user=current_user)
 
-#     res=conn.execute(DELETE_PROMPT_BY_ID,{
-#         "prompt_id":prompt_id,
-#         "user_id":current_user['id']
-#     })
-#     if res.rowcount == 0:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Cannot delete")
-#     return {
-#         "message":"deleted",
-#         "id":prompt_id
-#     }
-
-
-# @router.put("/prompt/update/{prompt_id}",tags=['prompt'])
-# def update_prompt_by_id(
-#     prompt_id:int,
-#     prompt_data:Annotated[PromptUpdate,Body()],
-#     conn:Annotated[Connection,Depends(get_conn)],
-#     current_user=Depends(get_current_user)
-#     ):
-
-#     res=conn.execute(UPDATE_PROMPT_BY_ID,{
-#         "prompt_id":prompt_id,
-#         "user_id":current_user['id'],
-#         **prompt_data.model_dump()
-#         })
-#     if res.rowcount==0:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Cannot update")
-#     return {
-#         "message":"updated",
-#         "id":prompt_id,
-#         "data":prompt_data
-#     }

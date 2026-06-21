@@ -200,7 +200,7 @@ DELETE_PROMPT_BY_ID=text(
 
 UPDATE_PROMPT_BY_ID = text(
         """
-    UPDATE prompts set title=:title, content=:content where id=:prompt_id and user_id=:user_id
+    UPDATE prompts set title=:title, content=:content,is_private=:is_private where id=:prompt_id and user_id=:user_id
 """
     )
 

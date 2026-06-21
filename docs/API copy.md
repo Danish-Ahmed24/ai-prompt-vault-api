@@ -28,26 +28,6 @@ PUT /users/me
 }
 ```
 
----
-
-# 📝 Prompts
-
----
-
-## Update Prompt
-```http
-PUT /prompts/{id}
-```
-
----
-
-## Delete Prompt
-```http
-DELETE /prompts/{id}
-```
-
----
-
 # 💬 Comments
 
 ## Get Comments of Prompt

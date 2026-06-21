@@ -1,6 +1,6 @@
 from sqlalchemy.engine import Connection
 from app.sql.prompts_sql import *
-
+from ..schemas.prompts_schema import PromptUpdate
 
 def get_prompts(conn:Connection,user_id:int|None=None):
     if user_id is None:
@@ -48,3 +48,18 @@ def delete_prompt_by_id(conn:Connection,prompt_id:int,user_id:int):
         "user_id":user_id
     })
     return result.rowcount
+
+def update_prompt_by_id(
+    prompt_id:int,
+    prompt_update_data:PromptUpdate,
+    conn:Connection,
+    user_id:int
+):
+    result = conn.execute(UPDATE_PROMPT_BY_ID,{
+        "prompt_id":prompt_id,
+        "user_id":user_id,
+        **prompt_update_data.model_dump()
+    })
+    if result.rowcount == 0:
+        return None
+    return get_prompt_by_id(conn=conn, prompt_id=prompt_id, user_id=user_id)
