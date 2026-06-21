@@ -35,3 +35,16 @@ def get_my_prompts(conn:Connection,user_id:int):
 def add_prompt(conn:Connection,prompt_data:dict):
     result = conn.execute(INSERT_PROMPT,prompt_data)
     return get_prompt_by_id(conn=conn,prompt_id=result.lastrowid,user_id=prompt_data['user_id'])
+
+def get_prompt_data_by_id(conn:Connection,prompt_id:int):
+    result = conn.execute(GET_PROMPT_DATA_BY_ID,{
+        "prompt_id":prompt_id
+    })
+    return result.mappings().fetchone()
+
+def delete_prompt_by_id(conn:Connection,prompt_id:int,user_id:int):
+    result = conn.execute(DELETE_PROMPT_BY_ID,{
+        "prompt_id":prompt_id,
+        "user_id":user_id
+    })
+    return result.rowcount

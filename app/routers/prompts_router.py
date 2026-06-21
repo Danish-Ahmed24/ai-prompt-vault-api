@@ -19,13 +19,12 @@ def get_prompts(
 ):
     return prompts_service.get_prompts(conn=conn,current_user=current_user)
 
-@router.get("/prompts/me",response_model=list[PromptResponse])
+@router.get("users/me/prompts",response_model=list[PromptResponse])
 def get_my_prompts(
     conn:dbConn,
     current_user=Depends(get_current_user)
 ):
     return prompts_service.get_my_prompts(conn=conn,current_user=current_user)
-
 
 @router.get("/prompts/{prompt_id}",response_model=PromptResponse)
 def get_prompt_by_id(
@@ -35,9 +34,6 @@ def get_prompt_by_id(
 ):
     return prompts_service.get_prompt_by_id(conn=conn,current_user=current_user,prompt_id=prompt_id)
 
-
-
-
 @router.post("/prompts",status_code=status.HTTP_201_CREATED,response_model=PromptResponse)
 def add_prompt(
     prompt_data: Annotated[PromptCreate,Body()],
@@ -46,8 +42,13 @@ def add_prompt(
 ):
     return prompts_service.add_prompt(prompt_data=prompt_data,conn=conn,current_user=current_user)
 
-
-
+@router.delete("/prompts/{prompt_id}")
+def delete_prompt_by_id(
+    prompt_id:int,
+    conn:dbConn,
+    current_user=Depends(get_current_user)
+):
+    return prompts_service.delete_prompt_by_id(prompt_id=prompt_id,conn=conn,current_user=current_user)
 # @router.delete("/prompt/delete/{prompt_id}",tags=['prompt'])
 # def delete_prompt_by_id(
 #     prompt_id:int,

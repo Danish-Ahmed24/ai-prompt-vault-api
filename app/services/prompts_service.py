@@ -38,3 +38,19 @@ def add_prompt(
     if added_prompt is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="Cannot add prompt")
     return added_prompt
+
+def delete_prompt_by_id(
+    prompt_id:int,
+    conn:Connection,
+    current_user
+):
+    prompt_data = prompts_repo.get_prompt_data_by_id(conn=conn,prompt_id=prompt_id)
+    if prompt_data is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if current_user['id']!=prompt_data['user_id']:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Not your prompt")
+    
+    no_of_rows_deleted = prompts_repo.delete_prompt_by_id(conn=conn,prompt_id=prompt_id,user_id=current_user['id'])
+    if no_of_rows_deleted ==0:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+    return {"message":"deleted success"}

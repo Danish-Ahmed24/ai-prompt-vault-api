@@ -181,12 +181,9 @@ ORDER BY p.created_at DESC;
 """
 )
 
-
-
-
-
-
-
+GET_PROMPT_DATA_BY_ID=text("""
+    SELECT * FROM prompts WHERE id=:prompt_id
+""")
 
 INSERT_PROMPT=text(
         """
@@ -194,10 +191,9 @@ INSERT_PROMPT=text(
 """
     )
 
-
 DELETE_PROMPT_BY_ID=text(
         """
-        DELETE from prompts where id = :prompt_id and user_id=:user_id
+        DELETE from prompts where id = :prompt_id and user_id=:user_id;
 """
     )
 
