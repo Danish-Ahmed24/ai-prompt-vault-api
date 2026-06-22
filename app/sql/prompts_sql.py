@@ -31,8 +31,8 @@ LEFT JOIN (
 ) c 
     ON c.prompt_id = p.id
 WHERE p.is_private = FALSE
-ORDER BY p.created_at DESC;
-
+ORDER BY p.created_at DESC
+LIMIT :limit OFFSET :offset;
                     """)
 
 GET_ALL_PROMPTS_FOR_LOGGED_USER = text("""
@@ -68,7 +68,8 @@ LEFT JOIN (
 ) c 
     ON c.prompt_id = p.id
 WHERE (p.is_private = FALSE OR p.user_id = :user_id)
-ORDER BY p.created_at DESC;
+ORDER BY p.created_at DESC
+LIMIT :limit OFFSET :offset;
 
                     """)
 
@@ -176,8 +177,8 @@ LEFT JOIN (
 ) c 
     ON c.prompt_id = p.id
 WHERE p.user_id=:user_id
-ORDER BY p.created_at DESC;
-
+ORDER BY p.created_at DESC
+LIMIT :limit OFFSET :offset;
 """
 )
 
@@ -205,3 +206,14 @@ UPDATE_PROMPT_BY_ID = text(
     )
 
 
+COUNT_NO_OF_PUBLIC_PROMPTS_GUEST=text("""
+    SElECT COUNT(*) as count FROM prompts WHERE is_private=False; 
+""")
+
+COUNT_NO_OF_PUBLIC_PROMPTS_LOGGED=text("""
+    SElECT COUNT(*) as count FROM prompts WHERE is_private=False or user_id=:user_id; 
+""")
+
+COUNT_NO_OF_MY_PROMPTS=text("""
+    SElECT COUNT(*) as count FROM prompts WHERE user_id=:user_id;
+""")

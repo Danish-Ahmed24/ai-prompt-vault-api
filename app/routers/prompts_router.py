@@ -1,9 +1,9 @@
-from fastapi import Depends,HTTPException,status,Body,APIRouter
+from fastapi import Depends,HTTPException,status,Body,APIRouter,Query
 from app.database import get_conn,dbConn
 from typing import Annotated
 from sqlalchemy.engine import Connection
 from sqlalchemy import text
-from ..schemas.prompts_schema import PromptCreate,PromptResponse,PromptUpdate
+from ..schemas.prompts_schema import PromptCreate,PromptResponse,PromptUpdate,PromptPaginatedResponse
 from app.sql.prompts_sql import *
 from ..auth import get_current_user,get_current_optional_user
 from ..services import prompts_service
@@ -12,19 +12,21 @@ router = APIRouter()
 
 
 
-@router.get("/prompts",response_model=list[PromptResponse])
+@router.get("/prompts",response_model=PromptPaginatedResponse)
 def get_prompts(
     conn:dbConn,
-    current_user=Depends(get_current_optional_user)
+    current_user=Depends(get_current_optional_user),
+    page:Annotated[int,Query(ge=1)]=1
 ):
-    return prompts_service.get_prompts(conn=conn,current_user=current_user)
+    return prompts_service.get_prompts(conn=conn,current_user=current_user,page=page)
 
-@router.get("/users/me/prompts",response_model=list[PromptResponse])
+@router.get("/users/me/prompts",response_model=PromptPaginatedResponse)
 def get_my_prompts(
     conn:dbConn,
-    current_user=Depends(get_current_user)
+    current_user=Depends(get_current_user),
+    page:Annotated[int,Query(ge=1)]=1
 ):
-    return prompts_service.get_my_prompts(conn=conn,current_user=current_user)
+    return prompts_service.get_my_prompts(conn=conn,current_user=current_user,page=page)
 
 @router.get("/prompts/{prompt_id}",response_model=PromptResponse)
 def get_prompt_by_id(

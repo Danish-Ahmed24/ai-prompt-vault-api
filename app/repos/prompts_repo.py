@@ -2,11 +2,27 @@ from sqlalchemy.engine import Connection
 from app.sql.prompts_sql import *
 from ..schemas.prompts_schema import PromptUpdate
 
-def get_prompts(conn:Connection,user_id:int|None=None):
+def count_no_of_prompts(conn:Connection,user_id:int|None=None):
     if user_id is None:
-        result = conn.execute(GET_ALL_PROMPTS_FOR_GUEST_USER)
+        result = conn.execute(COUNT_NO_OF_PUBLIC_PROMPTS_GUEST)
     else:
-        result = conn.execute(GET_ALL_PROMPTS_FOR_LOGGED_USER,{"user_id":user_id})
+        result = conn.execute(COUNT_NO_OF_PUBLIC_PROMPTS_LOGGED,{"user_id":user_id})
+    return result.scalar_one()
+
+def count_no_of_my_prompts(conn:Connection,user_id:int|None=None):
+    result = conn.execute(COUNT_NO_OF_MY_PROMPTS,{"user_id":user_id})
+    return result.scalar_one()
+
+
+def get_prompts(conn:Connection,pagination:dict,user_id:int|None=None):
+    
+    if user_id is None:
+        result = conn.execute(GET_ALL_PROMPTS_FOR_GUEST_USER,pagination)
+    else:
+        result = conn.execute(GET_ALL_PROMPTS_FOR_LOGGED_USER,{
+            "user_id":user_id,
+            **pagination
+            })
     return result.mappings().fetchall()
 
 def get_prompt_by_id(
@@ -26,9 +42,10 @@ def get_prompt_by_id(
     return result.mappings().fetchone()
 
 
-def get_my_prompts(conn:Connection,user_id:int):
+def get_my_prompts(conn:Connection,pagination:dict,user_id:int):
     result = conn.execute(GET_MY_PROMPTS,{
-        "user_id":user_id
+        "user_id":user_id,
+        **pagination
     })
     return result.mappings().fetchall()
 

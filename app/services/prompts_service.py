@@ -2,11 +2,31 @@ from sqlalchemy.engine import Connection
 from ..repos import prompts_repo
 from fastapi import HTTPException,status
 from ..schemas.prompts_schema import PromptCreate,PromptUpdate
+from math import ceil
 
-def get_prompts(conn:Connection,current_user):
+PAGE_SIZE = 2
+
+def get_pagination_params(page:int=1):
+    limit = PAGE_SIZE
+    offset = (page-1)*PAGE_SIZE
+    pagination = {
+        "limit":limit,
+        "offset":offset
+    }
+    return pagination
+
+def get_prompts(conn:Connection,current_user,page:int):
     user_id=current_user['id'] if current_user else None
-    all_prompts = prompts_repo.get_prompts(conn=conn,user_id=user_id)
-    return all_prompts
+    pagination=get_pagination_params(page=page)
+    all_prompts = prompts_repo.get_prompts(conn=conn,user_id=user_id,pagination=pagination)
+    total = prompts_repo.count_no_of_prompts(conn=conn,user_id=user_id)
+    return {
+        "items":all_prompts,
+        "page":page,
+        "page_size":PAGE_SIZE,
+        "total":total,
+        "total_pages":ceil(total/PAGE_SIZE)
+    }
 
 def get_prompt_by_id(
     conn:Connection,
@@ -19,10 +39,18 @@ def get_prompt_by_id(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     return prompt_by_id
 
-def get_my_prompts(conn:Connection,current_user):
+def get_my_prompts(conn:Connection,current_user,page:int):
     user_id = current_user['id']
-    my_prompts = prompts_repo.get_my_prompts(conn=conn,user_id=user_id)
-    return my_prompts
+    pagination=get_pagination_params(page=page)
+    my_prompts = prompts_repo.get_my_prompts(conn=conn,user_id=user_id,pagination=pagination)
+    total = prompts_repo.count_no_of_my_prompts(conn=conn,user_id=user_id)
+    return {
+        "items":my_prompts,
+        "page":page,
+        "page_size":PAGE_SIZE,
+        "total":total,
+        "total_pages":ceil(total/PAGE_SIZE)
+    }
 
 def add_prompt(
     prompt_data:PromptCreate,

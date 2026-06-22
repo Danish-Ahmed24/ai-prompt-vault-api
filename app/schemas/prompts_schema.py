@@ -30,6 +30,13 @@ class PromptResponse(PromptBase):
     bookmarked:bool | None = None
     my_reaction:ReactionType | None = None
 
+class PromptPaginatedResponse(BaseModel):
+    items:list[PromptResponse]
+    page:int
+    page_size:int
+    total:int
+    total_pages:int
+
 # [
 #   {
 #     "id": 1,
