@@ -43,3 +43,9 @@ def add_comment(conn:Connection,prompt_id:int,comment_data:Comment,current_user)
     if rows_inserted==0:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return {"message":comment_data.message}
+
+def delete_comment(conn:Connection,comment_id:int,current_user):
+    rows_deleted = comments_repo.delete_comment(conn=conn,comment_id=comment_id,user_id=current_user['id'])
+    if rows_deleted==0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    return {"message":"Comment deleted successfully"}

@@ -23,3 +23,11 @@ def add_comment(
     current_user=Depends(get_current_user)
 ):
     return comments_service.add_comment(conn=conn,prompt_id=prompt_id,current_user=current_user,comment_data=comment_data)
+
+@router.delete("/comments/{comment_id}")
+def delete_comment(
+    conn:dbConn,
+    comment_id:int,
+    current_user=Depends(get_current_user)
+   ):
+    return comments_service.delete_comment(conn=conn,comment_id=comment_id,current_user=current_user)

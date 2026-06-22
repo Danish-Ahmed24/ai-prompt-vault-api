@@ -6,6 +6,7 @@ class Comment(BaseModel):
     message:str
 
 class CommentResponse(Comment): 
+    id:int
     username:str
     created_at:datetime
 

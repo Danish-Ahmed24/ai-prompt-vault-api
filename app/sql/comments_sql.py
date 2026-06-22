@@ -2,7 +2,7 @@ from sqlalchemy import text
 
 GET_ALL_COMMENTS_GUEST=text(
     """
-    SELECT u.username, c.message, c.created_at
+    SELECT c.id,u.username, c.message, c.created_at
 FROM comments c
 JOIN users u ON u.id = c.user_id
 WHERE c.prompt_id = :prompt_id
@@ -12,6 +12,7 @@ LIMIT :limit OFFSET :offset;
 
 GET_ALL_COMMENTS_LOGGED = text("""
 SELECT 
+    c.id,
     CASE 
         WHEN c.user_id = :user_id THEN 'me'
         ELSE u.username
@@ -35,3 +36,9 @@ ADD_COMMENT=text(
     INSERT INTO comments(user_id,prompt_id,message) VALUES(:user_id,:prompt_id,:message);
 """
 )
+
+DELETE_COMMENT = text("""
+DELETE FROM comments 
+WHERE id = :comment_id 
+AND user_id = :user_id;
+""")

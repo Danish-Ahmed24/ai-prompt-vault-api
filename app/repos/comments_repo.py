@@ -36,3 +36,10 @@ def add_comment(conn:Connection,prompt_id:int,user_id:int,comment_data:Comment):
         **comment_data.model_dump()
     })
     return result.rowcount
+
+def delete_comment(conn:Connection,comment_id:int,user_id:int):
+    result = conn.execute(DELETE_COMMENT,{
+        "comment_id":comment_id,
+        "user_id":user_id
+    })
+    return result.rowcount

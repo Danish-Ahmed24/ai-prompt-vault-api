@@ -16,3 +16,7 @@ pwdlib
 
 service mein if else mein bug hai
 pydantic schemas update
+
+
+CASE Statements in sql 
+before deleting comment if it doesnt exists then 404 if user is not owner then ownership detail
