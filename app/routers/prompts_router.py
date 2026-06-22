@@ -8,7 +8,7 @@ from app.sql.prompts_sql import *
 from ..auth import get_current_user,get_current_optional_user
 from ..services import prompts_service
 
-router = APIRouter()
+router = APIRouter(tags=['prompts'])
 
 
 

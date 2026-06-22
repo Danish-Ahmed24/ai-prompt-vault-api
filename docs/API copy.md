@@ -28,38 +28,7 @@ PUT /users/me
 }
 ```
 
-# 💬 Comments
 
-## Get Comments of Prompt
-```http
-GET /prompts/{id}/comments?page=1
-```
-
-### Response
-```json
-[
-  {
-    "id": 1,
-    "message": "Nice prompt!",
-    "user": "ali",
-    "created_at": "2026-06-20T10:00:00Z"
-  }
-]
-```
-
----
-
-## Add Comment
-```http
-POST /prompts/{id}/comments
-```
-
-### Request
-```json
-{
-  "message": "Great prompt!"
-}
-```
 
 ---
 
@@ -154,34 +123,3 @@ POST /bookmarks
 ```http
 DELETE /bookmarks/{id}
 ```
-
----
-
-# 📌 General Rules
-
-### Authentication
-- All endpoints (except auth) require JWT token
-
-### Pagination
-- `page`
-- `limit`
-
-### Standard Response Codes
-- 200 OK
-- 201 Created
-- 400 Bad Request
-- 401 Unauthorized
-- 404 Not Found
-- 500 Server Error
-
----
-
-# 🧠 Design Principles Used
-
-- RESTful resource-based design
-- Unified reaction system (polymorphic)
-- Minimal nesting (max 2 levels)
-- Scalable structure for React & Flutter clients
-- Separation of concerns (auth, prompts, comments, reactions)
-
----
