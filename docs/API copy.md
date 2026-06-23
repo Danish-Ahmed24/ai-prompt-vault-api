@@ -30,14 +30,6 @@ PUT /users/me
 
 
 
----
-
-## Delete Comment
-```http
-DELETE /comments/{id}
-```
-
----
 
 # ❤️ Reactions (Unified System)
 

@@ -43,3 +43,10 @@ def delete_comment(conn:Connection,comment_id:int,user_id:int):
         "user_id":user_id
     })
     return result.rowcount
+
+
+def get_comment_by_id(conn:Connection,comment_id:int):
+    result = conn.execute(GET_COMMENT_BY_ID,{
+        "comment_id":comment_id
+    })
+    return result.scalar_one_or_none()

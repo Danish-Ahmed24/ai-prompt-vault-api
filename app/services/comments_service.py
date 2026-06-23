@@ -45,6 +45,11 @@ def add_comment(conn:Connection,prompt_id:int,comment_data:Comment,current_user)
     return {"message":comment_data.message}
 
 def delete_comment(conn:Connection,comment_id:int,current_user):
+    owner_id = comments_repo.get_comment_by_id(conn=conn,comment_id=comment_id)
+    if owner_id is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if owner_id!=current_user['id']:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Not Your Comment")
     rows_deleted = comments_repo.delete_comment(conn=conn,comment_id=comment_id,user_id=current_user['id'])
     if rows_deleted==0:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

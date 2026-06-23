@@ -42,3 +42,10 @@ DELETE FROM comments
 WHERE id = :comment_id 
 AND user_id = :user_id;
 """)
+
+
+GET_COMMENT_BY_ID=text(
+    """
+    SELECT user_id from comments where id=:comment_id;
+"""
+)
