@@ -50,10 +50,6 @@ CREATE TABLE bookmarks (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (prompt_id) REFERENCES prompts(id) ON DELETE CASCADE
 );
-drop table user;
-use promptdb;
-select * from user;
-show tables;
 
 SELECT 
     p.id,

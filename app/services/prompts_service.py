@@ -4,7 +4,7 @@ from fastapi import HTTPException,status
 from ..schemas.prompts_schema import PromptCreate,PromptUpdate
 from math import ceil
 
-PAGE_SIZE = 2
+PAGE_SIZE = 10
 
 def get_pagination_params(page:int=1):
     limit = PAGE_SIZE

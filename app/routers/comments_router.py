@@ -15,7 +15,7 @@ def get_comments(
     ):
     return comments_service.get_comments(conn=conn,prompt_id=prompt_id,current_user=current_user,page=page)
 
-@router.post("/prompts/{prompt_id}/comments",response_model=Comment)
+@router.post("/prompts/{prompt_id}/comments",response_model=Comment,status_code=status.HTTP_201_CREATED)
 def add_comment(
     conn:dbConn,
     prompt_id:int,

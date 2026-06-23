@@ -7,7 +7,7 @@ from sqlalchemy.engine import Connection
 from math import ceil
 from ..services.prompts_service import get_prompt_by_id
 
-PAGE_SIZE = 2
+PAGE_SIZE = 10
 
 def get_pagination_params(page:int=1):
     limit = PAGE_SIZE
@@ -38,7 +38,7 @@ def get_comments(
     }
 
 def add_comment(conn:Connection,prompt_id:int,comment_data:Comment,current_user):
-    prompt = get_prompt_by_id(conn=conn,current_user=None,prompt_id=prompt_id)
+    prompt = get_prompt_by_id(conn=conn,current_user=current_user,prompt_id=prompt_id)
     rows_inserted = comments_repo.add_comment(conn=conn,prompt_id=prompt_id,user_id=current_user['id'],comment_data=comment_data)
     if rows_inserted==0:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

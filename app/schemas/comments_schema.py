@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 
 class Comment(BaseModel):
-    message:str
+    message: str = Field(min_length=1, max_length=2000)
 
 class CommentResponse(Comment): 
     id:int

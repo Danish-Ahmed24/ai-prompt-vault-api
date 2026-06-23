@@ -8,8 +8,8 @@ class ReactionType(str,Enum):
     none = 'none'
 
 class PromptBase(BaseModel):
-    title: str  
-    content: str
+    title: str = Field(min_length=1, max_length=255)
+    content: str = Field(min_length=1, max_length=10000)
     
 
 class PromptCreate(PromptBase):
