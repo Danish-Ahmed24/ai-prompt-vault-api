@@ -15,6 +15,10 @@ if DATABASE_URL is None:
     DB_PASSWORD = os.getenv("DB_PASSWORD")
     DB_USER = os.getenv("DB_USER", "root")
     DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@localhost:3306/promptdb"
+else:
+    # Production - ensure MySQL URLs use pymysql driver
+    if DATABASE_URL.startswith('mysql://'):
+        DATABASE_URL = DATABASE_URL.replace('mysql://', 'mysql+pymysql://', 1)
 
 engine = create_engine(
     DATABASE_URL,
