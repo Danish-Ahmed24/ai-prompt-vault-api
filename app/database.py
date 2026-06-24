@@ -7,9 +7,14 @@ from fastapi import Depends
 
 load_dotenv()
 
-DB_PASSWORD=os.getenv("DB_PASSWORD")
-DB_USER=os.getenv("DB_USER")
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@localhost:3306/promptdb"
+# Check if DATABASE_URL exists (production) or use local MySQL
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL is None:
+    # Local development
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DB_USER = os.getenv("DB_USER", "root")
+    DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@localhost:3306/promptdb"
 
 engine = create_engine(
     DATABASE_URL,
