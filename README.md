@@ -1,40 +1,29 @@
-# AI Prompt Vault 🚀
+# AI Prompt Vault
 
 A RESTful API for sharing and managing AI prompts with social features built with FastAPI.
 
-## 🎯 Features
+## Features
 
-### ✅ Implemented
+### Implemented
 - **Authentication**: JWT-based user registration and login with password hashing
 - **Prompts Management**: Full CRUD operations with public/private visibility control
 - **Comments System**: Nested comments with pagination and user ownership
+- **Reactions System**: Polymorphic like/dislike system for prompts and comments
 - **Authorization**: Resource ownership validation and access control
 - **Pagination**: Efficient data loading with page-based navigation
 
-### 🚧 Planned Features
-- Reactions system (likes/dislikes) - Database schema ready
-- Bookmarking functionality - Database schema ready
+### Future Enhancements
+- Bookmarking functionality
 - User profile management
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-**Backend Framework:**
 - FastAPI (Python 3.11+)
-- Uvicorn ASGI server
+- MySQL 8.0+ with SQLAlchemy
+- JWT authentication with Argon2 password hashing
+- Pydantic v2 for validation
 
-**Database:**
-- MySQL 8.0+
-- SQLAlchemy Core (raw SQL with parameterized queries)
-
-**Security:**
-- JWT (JSON Web Tokens) for authentication
-- pwdlib for password hashing (Argon2)
-- SQL injection prevention via parameterized queries
-
-**Validation:**
-- Pydantic v2 for request/response validation
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 app/
@@ -60,46 +49,42 @@ app/
 └── main.py           # FastAPI application
 ```
 
-**Architecture Pattern**: 3-layer architecture with clear separation of concerns
-- **Router Layer**: HTTP request handling
-- **Service Layer**: Business logic and authorization
-- **Repository Layer**: Database operations
+**Architecture Pattern**: 3-layer architecture (Router → Service → Repository)
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Python 3.11 or higher
-- MySQL 8.0 or higher
-- pip for package management
+- Python 3.11+
+- MySQL 8.0+
 
 ### Installation
 
-1. **Clone the repository**
+1. Clone the repository
 ```bash
-git clone <your-repo-url>
-cd AI_PROMPT_VAULT
+git clone https://github.com/YOUR_USERNAME/ai-prompt-vault-api.git
+cd ai-prompt-vault-api
 ```
 
-2. **Create virtual environment**
+2. Create virtual environment
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
-3. **Install dependencies**
+3. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Setup Database**
+4. Setup database
 ```bash
 # Create database and tables
 mysql -u root -p < ddl.sql
 ```
 
-5. **Configure Environment Variables**
+5. Configure environment variables
 
-Create `.env` file in root directory:
+Create `.env` file:
 ```env
 SECRET_KEY=your-secret-key-here-change-in-production
 ALGORITHM=HS256
@@ -107,53 +92,32 @@ DB_USER=root
 DB_PASSWORD=your-mysql-password
 ```
 
-6. **Run the application**
+6. Run the application
 ```bash
 uvicorn app.main:app --reload
 ```
 
-7. **Access API Documentation**
+7. Access API documentation
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
-## 📊 Database Schema
+## Database Schema
 
-### Core Tables
+- **users**: User accounts with authentication
+- **prompts**: AI prompts with public/private visibility
+- **comments**: Nested comments on prompts
+- **reactions**: Polymorphic like/dislike system for prompts and comments
+- **bookmarks**: User bookmarking system (schema ready)
 
-**users**
-- User accounts with hashed passwords
-- Username uniqueness constraint
+## Security
 
-**prompts**
-- User-generated AI prompts
-- Public/private visibility control
-- Foreign key to users
+- Argon2 password hashing
+- JWT token authentication with expiration
+- Parameterized SQL queries (injection prevention)
+- Resource ownership validation
+- Input validation with length limits
 
-**comments**
-- Nested comments on prompts
-- User ownership tracking
-- Cascade delete on prompt/user deletion
-
-**reactions** (Ready for implementation)
-- Polymorphic design (works for prompts AND comments)
-- Like/dislike tracking
-- Composite primary key (user_id, target_type, target_id)
-
-**bookmarks** (Ready for implementation)
-- User bookmarking system
-- Composite primary key (user_id, prompt_id)
-
-## 🔒 Security Features
-
-- ✅ Password hashing with Argon2 (industry standard)
-- ✅ JWT token-based authentication with expiration
-- ✅ SQL injection prevention (parameterized queries)
-- ✅ Resource ownership validation before delete/update
-- ✅ Private/public content access control
-- ✅ Input validation with Pydantic (length limits, required fields)
-- ✅ CORS configuration for controlled access
-
-## 📚 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /register` - Create new user account
@@ -162,64 +126,47 @@ uvicorn app.main:app --reload
 ### Prompts
 - `GET /prompts` - List all public prompts (paginated)
 - `GET /prompts/{id}` - Get single prompt details
-- `POST /prompts` - Create new prompt (auth required)
-- `PUT /prompts/{id}` - Update prompt (auth + ownership required)
-- `DELETE /prompts/{id}` - Delete prompt (auth + ownership required)
-- `GET /users/me/prompts` - Get current user's prompts (auth required)
+- `POST /prompts` - Create new prompt (requires auth)
+- `PUT /prompts/{id}` - Update prompt (requires ownership)
+- `DELETE /prompts/{id}` - Delete prompt (requires ownership)
+- `GET /users/me/prompts` - Get current user's prompts
 
 ### Comments
 - `GET /prompts/{id}/comments` - Get comments for a prompt (paginated)
-- `POST /prompts/{id}/comments` - Add comment (auth required)
-- `DELETE /comments/{id}` - Delete comment (auth + ownership required)
+- `POST /prompts/{id}/comments` - Add comment (requires auth)
+- `DELETE /comments/{id}` - Delete comment (requires ownership)
 
-📖 **Full API documentation**: See [docs/API.md](docs/API.md) or visit `/docs` endpoint
+### Reactions
+- `POST /reactions` - Add or update reaction (requires auth)
+- `DELETE /reactions` - Remove reaction (requires auth)
+- `GET /reactions` - Get reaction stats (public)
 
-## 🧪 Testing
+Full documentation available at `/docs` endpoint
 
-### Manual Testing
-1. Start the server: `uvicorn app.main:app --reload`
-2. Open Swagger UI: http://localhost:8000/docs
-3. Test flow:
-   - Register a user → POST /register
-   - Login → POST /token (copy the access_token)
-   - Click "Authorize" button, paste token
-   - Create a prompt → POST /prompts
-   - Add a comment → POST /prompts/{id}/comments
-   - List prompts → GET /prompts
+## Testing
 
-## 🎓 Learning Outcomes
+Start the server and open http://localhost:8000/docs
+
+Test flow:
+1. Register a user (POST /register)
+2. Login (POST /token) and copy the token
+3. Click "Authorize" and paste the token
+4. Create a prompt (POST /prompts)
+5. Add a comment (POST /prompts/{id}/comments)
+6. Add a reaction (POST /reactions)
+7. Get reaction stats (GET /reactions)
+
+## Learning Outcomes
 
 This project demonstrates:
-- ✅ RESTful API design principles
-- ✅ JWT authentication & authorization flows
-- ✅ Layered architecture pattern (separation of concerns)
-- ✅ Complex SQL queries (JOINs, subqueries, aggregations)
-- ✅ Input validation and error handling
-- ✅ Database transaction management with SQLAlchemy
-- ✅ API documentation with OpenAPI/Swagger
-- ✅ Security best practices (password hashing, parameterized queries)
+- RESTful API design
+- JWT authentication and authorization
+- Layered architecture pattern
+- Complex SQL queries (JOINs, subqueries, aggregations)
+- Input validation and error handling
+- Security best practices
 
-## 🔧 Future Improvements
+## License
 
-- [ ] Complete reactions system implementation (likes/dislikes)
-- [ ] Complete bookmarks functionality
-- [ ] Add user profile management endpoints
-- [ ] Unit and integration tests (pytest)
-- [ ] Rate limiting for API endpoints
-- [ ] Logging system (structured logs)
-- [ ] Database migrations (Alembic)
-- [ ] Docker containerization
-- [ ] CI/CD pipeline
-- [ ] Deploy to cloud platform
+Educational project for learning purposes.
 
-## 📝 License
-
-This is a learning project for educational purposes.
-
-## 👤 Author
-
-Learning FastAPI and Backend Development
-
----
-
-**Note**: This project focuses on code quality and clean architecture over feature completeness, demonstrating solid fundamentals in backend development.
