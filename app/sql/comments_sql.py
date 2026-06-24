@@ -6,8 +6,8 @@ GET_ALL_COMMENTS_GUEST=text(
 FROM comments c
 JOIN users u ON u.id = c.user_id
 WHERE c.prompt_id = :prompt_id
-LIMIT :limit OFFSET :offset
-ORDER BY c.created_at DESC;
+ORDER BY c.created_at DESC
+LIMIT :limit OFFSET :offset;
 """
 )
 
@@ -23,8 +23,8 @@ SELECT
 FROM comments c
 JOIN users u ON u.id = c.user_id
 WHERE c.prompt_id = :prompt_id
-LIMIT :limit OFFSET :offset
-ORDER BY c.created_at DESC;
+ORDER BY c.created_at DESC
+LIMIT :limit OFFSET :offset;
 """)
 
 COUNT_NO_OF_COMMENTS = text(
