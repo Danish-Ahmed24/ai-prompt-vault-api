@@ -1,6 +1,44 @@
-# AI Prompt Vault
+# AI Prompt Vault API
 
 A RESTful API for sharing and managing AI prompts with social features built with FastAPI.
+
+🌐 **Live API**: https://ai-prompt-vault-api-production-0633.up.railway.app/docs
+
+## Features
+
+### Implemented
+- **Authentication**: JWT-based user registration and login with password hashing
+- **Prompts Management**: Full CRUD operations with public/private visibility control
+- **Comments System**: Nested comments with pagination and user ownership
+- **Reactions System**: Polymorphic like/dislike system for prompts and comments
+- **Authorization**: Resource ownership validation and access control
+- **Pagination**: Efficient data loading with page-based navigation
+
+### Future Enhancements
+- Bookmarking functionality
+- User profile management
+
+## Tech Stack
+
+- FastAPI (Python 3.13)
+- MySQL 8.0+ with SQLAlchemy
+- JWT authentication with Argon2 password hashing
+- Pydantic v2 for validation
+- Deployed on Railway
+
+## Quick Start
+
+### Try the Live API
+Visit the live API documentation: https://ai-prompt-vault-api-production-0633.up.railway.app/docs
+
+### Test Flow (Live API)
+1. **Register a user** (POST /register)
+2. **Login** (POST /token) and copy the token
+3. **Click "Authorize"** and paste the token
+4. **Create a prompt** (POST /prompts)
+5. **Add a comment** (POST /prompts/{id}/comments)
+6. **Add a reaction** (POST /reactions)
+7. **Get reaction stats** (GET /reactions)
 
 ## Features
 
@@ -51,10 +89,10 @@ app/
 
 **Architecture Pattern**: 3-layer architecture (Router → Service → Repository)
 
-## Getting Started
+## Getting Started (Local Development)
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.13+
 - MySQL 8.0+
 
 ### Installation
@@ -94,12 +132,27 @@ DB_PASSWORD=your-mysql-password
 
 6. Run the application
 ```bash
+# For development
+fastapi dev
+
+# For production
 uvicorn app.main:app --reload
 ```
 
 7. Access API documentation
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+## Deployment
+
+This API is deployed on Railway with automatic deployments from the main branch.
+
+### Environment Variables (Production)
+- `DATABASE_URL`: Automatically provided by Railway MySQL service
+- `SECRET_KEY`: Your JWT secret key
+- `ALGORITHM`: HS256
+
+The application automatically handles MySQL driver configuration for both local development and Railway production environments.
 
 ## Database Schema
 
@@ -145,6 +198,10 @@ Full documentation available at `/docs` endpoint
 
 ## Testing
 
+### Live API Testing
+Visit https://ai-prompt-vault-api-production-0633.up.railway.app/docs
+
+### Local Testing
 Start the server and open http://localhost:8000/docs
 
 Test flow:

@@ -6,6 +6,7 @@
 
 # --- Python ---
 __pycache__/
+
 *.py[cod]
 *$py.class
 *.so
@@ -37,6 +38,7 @@ venv.bak/
 
 # --- IDEs and Editors ---
 .vscode/
+.kiro/
 .idea/
 *.swp
 *.swo
